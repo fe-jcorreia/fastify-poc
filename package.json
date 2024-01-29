@@ -1,19 +1,28 @@
 {
   "name": "fastify-poc",
   "version": "1.0.0",
+  "type": "module",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node src/server.js"
+    "dev": "tsx watch src/server.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^20.11.5",
+    "@types/node": "20.11.5",
+    "@typescript-eslint/eslint-plugin": "6.19.1",
+    "@typescript-eslint/parser": "6.19.1",
+    "eslint": "8.56.0",
+    "sqlite3": "5.1.7",
+    "tsx": "4.7.0",
     "typescript": "5.3.3"
   },
   "dependencies": {
     "fastify": "4.25.2"
+  },
+  "engines": {
+    "node": ">=18.13.0"
   }
 }
