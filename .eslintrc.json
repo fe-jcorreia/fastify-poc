@@ -11,6 +11,5 @@
     "sourceType": "module"
   },
   "plugins": ["@typescript-eslint"],
-  "files": ["*.ts", "*.js"],
   "rules": {}
 }
