@@ -3,7 +3,7 @@ import { FastifyInstance } from "fastify";
 import { z } from "zod";
 import { knex } from "../database";
 
-export async function userRoutes(app: FastifyInstance) {
+export async function usersRoutes(app: FastifyInstance) {
   app.post("/", async (request, response) => {
     const userBodyValidator = z.object({
       name: z.string(),
@@ -38,7 +38,7 @@ export async function userRoutes(app: FastifyInstance) {
     const user = await knex("users").where({
       id: params.id,
       session_id: sessionId,
-    });
+    }).first();
 
     return { user };
   });

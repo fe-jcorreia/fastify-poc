@@ -1,9 +1,9 @@
 import fastify, { FastifyInstance } from "fastify";
-import { userRoutes } from "./routes/user";
+import { usersRoutes } from "./routes/users";
 import cookie from "@fastify/cookie";
 
 export const app: FastifyInstance = fastify({ logger: true });
 
 app.register(cookie);
 
-app.register(userRoutes, { prefix: "user" });
+app.register(usersRoutes, { prefix: "users" });
