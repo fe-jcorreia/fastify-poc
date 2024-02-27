@@ -1,4 +1,4 @@
-import { FastifyReply, FastifyRequest } from 'fastify';
+import { FastifyReply, FastifyRequest } from "fastify";
 
 export async function sessionIdMiddleware(
   request: FastifyRequest,
@@ -9,6 +9,6 @@ export async function sessionIdMiddleware(
   if (!sessionId) {
     return response
       .status(401)
-      .send({ message: 'Tried to access unauthorized resource' });
+      .send({ message: "Tried to access unauthorized resource" });
   }
 }

@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { FastifyInstance } from "fastify";
 import { z } from "zod";
 import { knex } from "../database";
+import { sessionIdMiddleware } from "../middlewares/session-id-middleware";
 
 export async function usersRoutes(app: FastifyInstance) {
   app.post("/", async (request, response) => {
@@ -27,19 +28,31 @@ export async function usersRoutes(app: FastifyInstance) {
     return response.status(201).send();
   });
 
-  app.get("/:id/metrics", async (request) => {
-    const { sessionId } = request.cookies;
-    const userParamsValidator = z.object({
-      id: z.string().uuid(),
-    });
+  app.get(
+    "/:id/metrics",
+    { preHandler: [sessionIdMiddleware] },
+    async (request) => {
+      const sessionId = request.cookies.sessionId;
+      const userParamsValidator = z.object({
+        id: z.string().uuid(),
+      });
 
-    const params = userParamsValidator.parse(request.params);
+      const params = userParamsValidator.parse(request.params);
 
-    const user = await knex("users").where({
-      id: params.id,
-      session_id: sessionId,
-    }).first();
+      const user = await knex("users")
+        .where({
+          id: params.id,
+          session_id: sessionId,
+        })
+        .first();
 
-    return { user };
+      return { user };
+    }
+  );
+
+  app.get("/", async () => {
+    const users = await knex("users").select();
+
+    return { users };
   });
 }
