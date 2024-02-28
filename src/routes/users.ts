@@ -46,7 +46,47 @@ export async function usersRoutes(app: FastifyInstance) {
         })
         .first();
 
-      return { user };
+      const meals = await knex("meals")
+        .where("user_id", user.id)
+        .orderBy("date");
+
+      const totalMeals = meals.length;
+      const inDietMeals = meals.filter((meal) => meal.is_diet).length;
+      const offDietMeals = totalMeals - inDietMeals;
+
+      const getMaxStreak = (meals: { is_diet: boolean }[]) => {
+        let maxStreak = 0;
+
+        let currentStreak = 0;
+        meals.forEach((meal) => {
+          if (meal.is_diet) {
+            currentStreak += 1;
+          } else {
+            maxStreak = Math.max(maxStreak, currentStreak);
+            currentStreak = 0;
+          }
+        });
+
+        maxStreak = Math.max(maxStreak, currentStreak);
+
+        return maxStreak;
+      };
+      const dietRecord = getMaxStreak(meals);
+
+      return {
+        user: {
+          id: user.id,
+          name: user.name,
+          bio: user.bio,
+          sessionId: user.session_id,
+          metrics: {
+            total: totalMeals,
+            inDiet: inDietMeals,
+            offDiet: offDietMeals,
+            dietStreak: dietRecord,
+          },
+        },
+      };
     }
   );
 

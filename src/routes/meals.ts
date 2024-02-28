@@ -44,6 +44,39 @@ export async function mealsRoutes(app: FastifyInstance) {
     }
   );
 
+  app.get(
+    "/:id",
+    { preHandler: [sessionIdMiddleware] },
+    async (request, response) => {
+      const mealParamsValidator = z.object({
+        id: z.string().uuid(),
+      });
+
+      const params = mealParamsValidator.parse(request.params);
+      const sessionId = request.cookies.sessionId;
+
+      const user = await knex("users").where("session_id", sessionId).first();
+      if (!user) {
+        return response.status(404).send({ message: "User not found" });
+      }
+
+      const meal = await knex("meals").where("id", params.id).first();
+
+      return response
+        .status(200)
+        .send({
+          meal: {
+            id: meal.id,
+            userId: meal.user_id,
+            name: meal.name,
+            description: meal.description,
+            date: meal.date,
+            isDiet: Boolean(meal.is_diet),
+          },
+        });
+    }
+  );
+
   app.post(
     "/",
     { preHandler: [sessionIdMiddleware] },
